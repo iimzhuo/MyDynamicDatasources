@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    druid:
+      master:
+        name: master
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://localhost/product_master?characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
+        port: 3306
+        username: root
+        password: Pass123!
