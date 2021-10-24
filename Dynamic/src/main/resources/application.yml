@@ -1,3 +1,4 @@
+
 spring:
   datasource:
     druid:
@@ -8,3 +9,9 @@ spring:
         port: 3306
         username: root
         password: Pass123!
+server:
+  port: 8087
+
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

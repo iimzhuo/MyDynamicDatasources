@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.Re.mapper.MasterMapper">
+    <resultMap id="ApplyAndProduct" type="com.Re.entity.Apply">
+        <id column="id" property="id"/>
+        <result property="applyDetail" column="apply_detail"/>
+        <association property="product" javaType="com.Re.entity.Product">
+            <id property="id" column="id"/>
+            <result property="price" column="price"/>
+            <result property="name" column="name"/>
+        </association>
+        <collection property="personList" ofType="com.Re.entity.ApproveStatus">
+            <id property="id" column="pid"/>
+            <result property="status" column="status"/>
+            <association property="person" javaType="com.Re.entity.ApprovePerson">
+                <id property="id" column="id"/>
+                <result property="personName" column="person_Name"/>
+            </association>
+        </collection>
+        <collection property="processList" ofType="com.Re.entity.LockProcess" select="selectProcess" column="id"/>
+    </resultMap>
+
+    <resultMap id="process" type="com.Re.entity.LockProcess">
+        <id property="id" column="id"/>
+        <result column="status" property="status"/>
+        <result property="lockno" column="lockno"/>
+        <association property="lockWip" javaType="com.Re.entity.LockWip">
+            <id property="id" column="id"/>
+            <result property="no" column="no"/>
+            <result property="status" column="status"/>
+            <result property="siteCode" column="site_code"/>
+            <collection property="lockWipDetailList" ofType="com.Re.entity.LockWipDetail">
+                <result property="wipStatus" column="wip_status"/>
+                <result property="sn" column="sn"/>
+            </collection>
+        </association>
+    </resultMap>
+
+    <select id="selectApply" resultMap="ApplyAndProduct">
+        select a.id,a.apply_detail,p.name,p.price from apply a,product p where a.product_id=p.id
+    </select>
+
+    <select id="selectApplyAndStatus" resultMap="ApplyAndProduct">
+        select a.id,a.apply_detail,p.name,p.price,status,astatus .ID
+        from apply a,product p ,approve_status astatus
+        where a.product_id=p.id
+        and a.id=astatus.apply_id
+    </select>
+
+    <select id="selectApplyAndPerson" resultMap="ApplyAndProduct">
+        select a.id,a.apply_detail,p.name,p.price,status,per.person_Name,astatus.id pid
+        from apply a,product p ,approve_status astatus,approve_person per
+        where a.product_id=p.id
+        and a.id=astatus.apply_id
+        and astatus.person_id=per.id
+    </select>
+
+    <select id="selectProcess" resultMap="process">
+        select lp.id,lp.status ,lp.lockno,lw.status ,lw.site_code,lw.no,lwd.wip_status,lwd.sn
+        from lock_process lp,lock_wip lw,lock_wip_detail lwd
+        where apply_id =#{id}
+        and lp.lockno=lw.no
+        and lwd.wip_id=lw.id
+    </select>
+</mapper>
